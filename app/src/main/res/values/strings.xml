@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BioMap</string>
+    <string name="calibrator">Calibrator</string>
+    <string name="user_type_instructions">Please choose who you are to get started.</string>
+    <string name="researcher">Researcher</string>
+    <string name="farmer">Farmer</string>
+</resources>

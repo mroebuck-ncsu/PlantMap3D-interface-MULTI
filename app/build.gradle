@@ -1,0 +1,86 @@
+plugins {
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.0'
+}
+
+android {
+    namespace "edu.ncsu.biomap"
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "edu.ncsu.biomap"
+        minSdk 26
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion "${versions.androidx.compose.ui}"
+    }
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+    testOptions {
+        animationsDisabled = true
+        unitTests {
+            returnDefaultValues = true
+            includeAndroidResources = true
+        }
+    }
+}
+
+dependencies {
+    implementation project(path: ':log')
+    implementation deps.androidx.ktx
+    implementation deps.androidx.lifecycle
+    implementation deps.androidx.activity_compose
+    implementation deps.androidx.compose.ui
+    implementation deps.androidx.compose.ui_tooling_preview
+    implementation deps.androidx.compose.material
+    implementation deps.androidx.navigation
+    implementation deps.google.systemuicontroller
+    implementation deps.jetbrains.coroutines
+    implementation deps.jetbrains.kotlinx.reflect
+    implementation deps.jetbrains.kotlinx.serialize_core
+    implementation deps.jetbrains.kotlinx.serialize_json
+    implementation deps.kodein.android
+    testImplementation deps.junit
+    testImplementation deps.mockito.android
+    testImplementation deps.mockito.kotlin
+    testImplementation deps.mockk
+    androidTestImplementation deps.androidx.compose.ui_test_junit
+    androidTestImplementation deps.androidx.test.espresso_core
+    androidTestImplementation deps.androidx.test.junit
+    androidTestImplementation deps.androidx.test.runner
+    androidTestImplementation deps.androidx.test.rules
+    debugImplementation deps.androidx.compose.ui_tooling
+    debugImplementation deps.androidx.compose.ui_test_manifest
+}

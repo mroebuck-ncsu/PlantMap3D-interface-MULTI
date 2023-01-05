@@ -1,0 +1,92 @@
+buildscript {
+    ext {
+        compose_ui_version = '1.1.1'
+    }
+    ext.versions = [
+            'compileSdk'            : 28,
+            'gradle_versions_plugin': '0.20.0',
+            'minSdk'                : 21,
+            'targetSdk'             : 28,
+
+            'androidx'              : [
+                    'activity_compose': '1.6.1',
+                    'appCompat'       : "1.0.0",
+                    'compose'         : [
+                            'material': '1.3.1',
+                            'ui'      : '1.3.2',
+                    ],
+                    'constraintLayout': "2.0.0-alpha3",
+                    'ktx'             : "1.9.0",
+                    'lifecycle'       : "2.5.1",
+                    "navigation"         : "2.5.3",
+                    'test'            : [
+                            'espresso_core': "3.5.0",
+                            'junit'        : "1.1.4",
+                            'runner'       : "1.1.1",
+                            'rules'        : "1.1.1",
+                    ],
+            ],
+            'google': [
+                    "systemuicontroller": "0.28.0",
+            ],
+            'jetbrains'             : [
+                    'kotlinx': "1.4.1",
+                    'kotlinx_reflect': "1.8.0",
+            ],
+            'junit'                 : "4.13.2",
+            'kodein'                : "7.17.0",
+            'mockito'               : [
+                    android: "2.23.4",
+                    kotlin : "2.1.0",
+            ],
+            'mockk'                 : '1.13.3',
+    ]
+
+    ext.deps = [
+            "androidx" : [
+                    "activity_compose": "androidx.activity:activity-compose:${versions.androidx.activity_compose}",
+                    "compose"         : [
+                            "ui"                : "androidx.compose.ui:ui:${versions.androidx.compose.ui}",
+                            "ui_test_junit"     : "androidx.compose.ui:ui-test-junit4:${versions.androidx.compose.ui}",
+                            "ui_test_manifest"  : "androidx.compose.ui:ui-test-manifest:${versions.androidx.compose.ui}",
+                            "ui_tooling"        : "androidx.compose.ui:ui-tooling:${versions.androidx.compose.ui}",
+                            "ui_tooling_preview": "androidx.compose.ui:ui-tooling-preview:${versions.androidx.compose.ui}",
+                            "material"          : "androidx.compose.material:material:${versions.androidx.compose.material}",
+                    ],
+                    "ktx"             : "androidx.core:core-ktx:${versions.androidx.ktx}",
+                    "lifecycle"       : "androidx.lifecycle:lifecycle-runtime-ktx:${versions.androidx.lifecycle}",
+                    "navigation" : "androidx.navigation:navigation-compose:${versions.androidx.lifecycle}",
+                    "test"            : [
+                            "espresso_core": "androidx.test.espresso:espresso-core:${versions.androidx.test.espresso_core}",
+                            "junit"        : "androidx.test.ext:junit:${versions.androidx.test.junit}",
+                            'rules'        : "androidx.test:rules:${versions.androidx.test.rules}",
+                            'runner'       : "androidx.test:runner:${versions.androidx.test.runner}",
+                    ],
+            ],
+            'google': [
+              "systemuicontroller": "com.google.accompanist:accompanist-systemuicontroller:${versions.google.systemuicontroller}",
+            ],
+            'jetbrains': [
+                    "coroutines": "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2",
+                    "kotlinx"   : [
+                            "reflect"       : "org.jetbrains.kotlin:kotlin-reflect:${versions.jetbrains.kotlinx_reflect}",
+                            "serialize_core": "org.jetbrains.kotlinx:kotlinx-serialization-core:${versions.jetbrains.kotlinx}",
+                            'serialize_json': "org.jetbrains.kotlinx:kotlinx-serialization-json:${versions.jetbrains.kotlinx}",
+                    ],
+            ],
+            'junit'    : "junit:junit:${versions.junit}",
+            'kodein'   : [
+                    'android': "org.kodein.di:kodein-di-framework-android-x:${versions.kodein}"
+            ],
+            'mockito'  : [
+                    android: "org.mockito:mockito-android:${versions.mockito.android}",
+                    kotlin : "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito.kotlin}",
+            ],
+            'mockk'    : "io.mockk:mockk:${versions.mockk}"
+    ]
+}// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    id 'com.android.application' version '7.3.1' apply false
+    id 'com.android.library' version '7.3.1' apply false
+    id 'org.jetbrains.kotlin.android' version "${kotlin_version}" apply false
+}

@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.ncsu.biomap.ui.theme.BioMapTheme
-import org.kodein.di.samples.edu.ncsu.biomap.MainViewModel
 import edu.ncsu.biomap.ui.common.ColorPalette
 import edu.ncsu.biomap.ui.common.DefaultAppActivity
 import edu.ncsu.biomap.ui.common.DefaultAppThemeState

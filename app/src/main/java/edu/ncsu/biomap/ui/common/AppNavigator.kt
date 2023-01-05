@@ -1,4 +1,4 @@
-package org.kodein.di.samples.edu.ncsu.biomap.ui.common
+package edu.ncsu.biomap.ui.common
 
 import android.content.Context
 import android.content.Intent

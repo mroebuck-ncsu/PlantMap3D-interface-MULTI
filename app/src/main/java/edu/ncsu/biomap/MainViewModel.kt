@@ -1,4 +1,4 @@
-package org.kodein.di.samples.edu.ncsu.biomap
+package edu.ncsu.biomap
 
 import android.content.Context
 import android.os.Bundle

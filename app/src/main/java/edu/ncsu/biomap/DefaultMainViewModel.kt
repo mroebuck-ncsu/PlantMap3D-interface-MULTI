@@ -1,7 +1,6 @@
 package edu.ncsu.biomap
 
 import android.content.Context
-import org.kodein.di.samples.edu.ncsu.biomap.MainViewModel
 
 class DefaultMainViewModel(
     private val navigator: MainNavigator = DefaultMainNavigator()

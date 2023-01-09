@@ -80,6 +80,9 @@ class DefaultTextInputViewModel(
         this.keyboardController = keyboardController
     }
 
+    override val canSaveChanges: Boolean
+        get() = this.attribute.value?.value?.isNotEmpty() == true
+
     private fun onFinish(intent: TextInputStore.Intent.Finish) {
         val data = Intent()
         val bundle = Bundle()

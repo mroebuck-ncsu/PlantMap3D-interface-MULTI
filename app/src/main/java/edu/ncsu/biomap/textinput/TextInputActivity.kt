@@ -1,19 +1,27 @@
 package edu.ncsu.biomap.textinput
 
 import android.content.res.Configuration
+import android.graphics.Paint.Align
 import android.os.Bundle
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import edu.ncsu.biomap.ui.theme.Checkmark
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.TextFieldDefaults.outlinedTextFieldColors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -23,14 +31,18 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -38,8 +50,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.ncsu.biomap.R
 import edu.ncsu.biomap.dashboard.DashboardKeys
+import edu.ncsu.biomap.dashboard.TopAppBarActionType
 import edu.ncsu.biomap.model.AttributeModel
 import edu.ncsu.biomap.ui.common.ColorPalette
 import edu.ncsu.biomap.ui.common.DefaultAppActivity
@@ -122,30 +136,85 @@ class TextInputActivity : DefaultAppActivity() {
             modifier = modifier.fillMaxWidth(),
             color = MaterialTheme.colors.background,
         ) {
-            Column(
-                modifier = modifier
-                    .idealWidth()
-                    .padding(horizontal = 8.dp)
+            Scaffold(
+                snackbarHost = { /*CreateSnackBarHost(it)*/ },
+                topBar = { CreateTopAppBar(modifier) },
+                drawerGesturesEnabled = true,
+                isFloatingActionButtonDocked = true,
             ) {
-                Text(
-                    modifier = modifier.padding(16.dp),
-                    text = "Placeholder Title",
-                    style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold),
-                )
-                CreateTextField(
-                    modifier = modifier,
-                    viewModel = viewModel,
-                )
-                Divider(color = Color.LightGray)
-                CreateAdditionalOptions(
-                    modifier = modifier,
-                    viewModel = viewModel,
-                )
-                CreateButton(
-                    modifier = modifier,
-                    viewModel = viewModel,
-                )
+                ScaffoldContentView(modifier, it)
             }
+        }
+    }
+
+    @Composable
+    private fun CreateTopAppBar(modifier: Modifier) {
+        TopAppBar(
+            modifier = modifier,
+            title = { Text(
+                viewModel.attribute.value?.attribute ?: "Attribute",
+                modifier = modifier
+            ) },
+            actions = {
+                // options icon (vertical dots)
+                TopAppBarActionButton(
+                    modifier = modifier,
+                    text = "Save"
+                ) {
+                    onSaveRequested()
+                }
+            }
+        )
+    }
+
+    @Composable
+    private fun TopAppBarActionButton(
+        modifier: Modifier,
+        text: String,
+        onClick: (Int) -> Unit
+    ) {
+        viewModel.apply {
+            val color = if(this.canSaveChanges) {
+                MaterialTheme.colors.onBackground
+            } else {
+                Color.Gray
+            }
+
+            val builder = AnnotatedString.Builder()
+            builder.withStyle(style = SpanStyle(color = color)) {
+                append(text)
+            }
+            val annotatedString = builder.toAnnotatedString()
+            ClickableText(
+                text = annotatedString,
+                modifier = modifier
+                    .padding(4.dp, 0.dp, 16.dp, 0.dp),
+                onClick = onClick,
+            )
+        }
+    }
+
+    @Composable
+    private fun ScaffoldContentView(modifier: Modifier, it: PaddingValues) {
+        Column(
+            modifier = modifier
+                .idealWidth()
+                .padding(horizontal = 8.dp)
+        ) {
+            Text(
+                modifier = modifier.padding(16.dp),
+                text = "Placeholder Title",
+                style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold),
+            )
+            CreateTextField(
+                modifier = modifier,
+                viewModel = viewModel,
+            )
+            Divider(color = Color.LightGray)
+            CreateAdditionalOptions(
+                modifier = modifier,
+                viewModel = viewModel,
+            )
         }
     }
 
@@ -178,12 +247,22 @@ class TextInputActivity : DefaultAppActivity() {
                 .clickable {
                     onOptionClicked(text)
                 }) {
-            Text(
-                modifier = modifier.padding(16.dp, 4.dp, 16.dp, 8.dp),
-                text = text,
-                style = MaterialTheme.typography.h6,
-                textAlign = TextAlign.Start,
-            )
+            Row(modifier = modifier) {
+                Text(
+                    modifier = modifier.padding(16.dp, 0.dp, 16.dp, 8.dp),
+                    text = text,
+                    style = MaterialTheme.typography.h6,
+                    textAlign = TextAlign.Start,
+                )
+                if(viewModel.attribute.value?.value == text) {
+                    Spacer(Modifier.weight(1f))
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        tint = Checkmark
+                    )
+                }
+            }
         }
     }
     @OptIn(ExperimentalComposeUiApi::class)
@@ -244,72 +323,6 @@ class TextInputActivity : DefaultAppActivity() {
     }
 
     @Composable
-    private fun CreateButton(
-        modifier: Modifier,
-        viewModel: TextInputViewModel
-    ) {
-        viewModel.apply {
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                when {
-                    shouldShowError.value -> {
-                        Text(
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            color = MaterialTheme.colors.error,
-                            text = "Error Placeholder Text"
-                        )
-                    }
-                    currentState.value is TextInputStore.State.ApiRequestError -> {
-                        val message =
-                            (currentState.value as TextInputStore.State.ApiRequestError).throwable.message
-                                ?: stringResource(
-                                    id = R.string.internal_server_error
-                                )
-                        Text(
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            color = MaterialTheme.colors.error,
-                            text = message
-                        )
-                    }
-                    currentState.value is TextInputStore.State.InputError -> {
-                        val message =
-                            (currentState.value as TextInputStore.State.InputError).throwable.message
-                                ?: stringResource(
-                                    id = R.string.internal_server_error
-                                )
-                        Text(
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            color = MaterialTheme.colors.error,
-                            text = message
-                        )
-                    }
-                    currentState.value is TextInputStore.State.ApiRequestInProgress -> {
-                        Text(
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            text = stringResource(id = R.string.saving_change)
-                        )
-                        CreateCircularProgressIndicator(
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            progress = 0f
-                        )
-                    }
-                }
-                Button(
-                    modifier = modifier.padding(vertical = 24.dp),
-                    onClick = {
-                        onSaveRequested()
-                    }
-                ) {
-                    Text(stringResource(R.string.save))
-                }
-            }
-        }
-    }
-
-    @Composable
     private fun CreateCircularProgressIndicator(
         modifier: Modifier = Modifier,
         progress: Float = 0.0f,
@@ -336,7 +349,7 @@ class TextInputActivity : DefaultAppActivity() {
     // region Private Non-Composable Methods
 
     private fun onOptionClicked(text: String) {
-
+        viewModel.emit(TextInputStore.Intent.ChangeRequested(text))
     }
 
     private fun onValueChanged(text: String) {
@@ -410,7 +423,7 @@ class TextInputActivity : DefaultAppActivity() {
             systemUiController = null,
             appThemeState = appThemeState,
         ) {
-            val attributeModel = AttributeModel("Plot ID", "None", listOf(
+            val attributeModel = AttributeModel("Plot ID", "5th", listOf(
                 "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th",
             ))
             val savedInstanceState = Bundle()

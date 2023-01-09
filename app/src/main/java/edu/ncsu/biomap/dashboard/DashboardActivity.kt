@@ -431,10 +431,6 @@ class DashboardActivity : DefaultAppActivity() {
         }
     }
 
-    private fun showToast(text: String) {
-        runOnUiThread { Toast.makeText(this, text, Toast.LENGTH_SHORT).show() }
-    }
-
     // endregion
 
     // region Previews

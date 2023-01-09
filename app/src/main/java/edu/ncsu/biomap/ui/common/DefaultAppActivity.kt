@@ -1,6 +1,7 @@
 package edu.ncsu.biomap.ui.common
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.requiredSizeIn
@@ -66,4 +67,8 @@ abstract class DefaultAppActivity :  ComponentActivity(), AppActivity {
 
     @Composable
     abstract fun MyApp(savedInstanceState: Bundle?)
+
+    protected fun showToast(text: String) {
+        runOnUiThread { Toast.makeText(this, text, Toast.LENGTH_SHORT).show() }
+    }
 }

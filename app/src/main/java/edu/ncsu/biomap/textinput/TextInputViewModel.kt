@@ -23,6 +23,7 @@ interface TextInputViewModel {
         keyboardController: SoftwareKeyboardController?,
     )
 
+    val canSaveChanges: Boolean
     val initialValue: AttributeModel?
     val currentState: MutableState<TextInputStore.State>
     val focusManager: FocusManager

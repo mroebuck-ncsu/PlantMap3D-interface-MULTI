@@ -57,7 +57,6 @@ class DefaultTextInputViewModel(
     override fun emit(intent: TextInputStore.Intent) {
         println("${this::class.simpleName}: New Intent Received=[$intent]")
         when(intent) {
-            TextInputStore.Intent.CancelRequested -> onCancelRequested(intent)
             is TextInputStore.Intent.ChangeRequested -> onChangeRequested(intent)
             TextInputStore.Intent.SaveRequested -> onSaveRequested(intent)
             is TextInputStore.Intent.Finish -> onFinish(intent)
@@ -95,10 +94,6 @@ class DefaultTextInputViewModel(
     // endregion
 
     // region Private Methods
-
-    private fun onCancelRequested(intent: TextInputStore.Intent) {
-        TODO("Not yet implemented")
-    }
 
     private fun onChangeRequested(intent: TextInputStore.Intent.ChangeRequested) {
         attribute.value = attribute.value?.copy(value = intent.value)

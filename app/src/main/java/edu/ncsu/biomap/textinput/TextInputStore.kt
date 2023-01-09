@@ -6,7 +6,6 @@ sealed class TextInputStore {
     sealed class Intent {
         data class ChangeRequested(val value: String) : Intent()
         object SaveRequested : Intent()
-        object CancelRequested : Intent()
         data class Finish(val activity: Activity) : Intent()
     }
 

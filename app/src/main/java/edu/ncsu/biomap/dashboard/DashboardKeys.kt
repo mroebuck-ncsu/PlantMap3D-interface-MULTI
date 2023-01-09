@@ -1,7 +1,5 @@
 package edu.ncsu.biomap.dashboard
 
-import androidx.compose.runtime.Composable
-
 enum class DashboardKeys(name: String) {
     Attribute(name = "ATTRIBUTE"),
     Value(name = "VALUE");

@@ -6,7 +6,10 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -27,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -35,6 +39,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import edu.ncsu.biomap.R
+import edu.ncsu.biomap.dashboard.DashboardKeys
+import edu.ncsu.biomap.model.AttributeModel
 import edu.ncsu.biomap.ui.common.ColorPalette
 import edu.ncsu.biomap.ui.common.DefaultAppActivity
 import edu.ncsu.biomap.ui.common.DefaultAppThemeState
@@ -131,6 +137,10 @@ class TextInputActivity : DefaultAppActivity() {
                     viewModel = viewModel,
                 )
                 Divider(color = Color.LightGray)
+                CreateAdditionalOptions(
+                    modifier = modifier,
+                    viewModel = viewModel,
+                )
                 CreateButton(
                     modifier = modifier,
                     viewModel = viewModel,
@@ -139,6 +149,43 @@ class TextInputActivity : DefaultAppActivity() {
         }
     }
 
+    @Composable
+    private fun CreateAdditionalOptions(modifier: Modifier, viewModel: TextInputViewModel) {
+        viewModel.apply {
+            val list = attribute.value?.options ?: listOf()
+            LazyColumn(
+                modifier = modifier,
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                items(
+                    items = list,
+                    itemContent = {
+                        CreateNextAdditionalOption(
+                            modifier,
+                            it
+                        )
+                    }
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun CreateNextAdditionalOption(modifier: Modifier, text: String) {
+        Column(
+            modifier
+                .fillMaxWidth()
+                .clickable {
+                    onOptionClicked(text)
+                }) {
+            Text(
+                modifier = modifier.padding(16.dp, 4.dp, 16.dp, 8.dp),
+                text = text,
+                style = MaterialTheme.typography.h6,
+                textAlign = TextAlign.Start,
+            )
+        }
+    }
     @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     private fun CreateTextField(
@@ -288,6 +335,10 @@ class TextInputActivity : DefaultAppActivity() {
 
     // region Private Non-Composable Methods
 
+    private fun onOptionClicked(text: String) {
+
+    }
+
     private fun onValueChanged(text: String) {
         viewModel.emit(TextInputStore.Intent.ChangeRequested(text))
     }
@@ -359,6 +410,14 @@ class TextInputActivity : DefaultAppActivity() {
             systemUiController = null,
             appThemeState = appThemeState,
         ) {
+            val attributeModel = AttributeModel("Plot ID", "None", listOf(
+                "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th",
+            ))
+            val savedInstanceState = Bundle()
+            savedInstanceState.putSerializable(DashboardKeys.Attribute.name, attributeModel)
+
+            viewModel = DefaultTextInputViewModel()
+            viewModel.onRestoreInstanceState(savedInstanceState)
             ConfigViewModel()
             TopView()
         }

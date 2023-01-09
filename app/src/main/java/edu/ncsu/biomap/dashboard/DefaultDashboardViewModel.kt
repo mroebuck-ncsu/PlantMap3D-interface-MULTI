@@ -81,11 +81,23 @@ class DefaultDashboardViewModel(
         )
 
         val attributes: List<AttributeModel> = listOf(
-            AttributeModel("Affiliation", "None"),
-            AttributeModel("Weeds/Cover Crop", "None"),
-            AttributeModel("Timing", "None"),
-            AttributeModel("Plot ID", "None"),
-            AttributeModel("Weather", "None"),
+            AttributeModel("Affiliation", "None", listOf(
+                "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th",
+                "11th", "12th", "13th", "14th", "15th", "16th", "17th", "18th", "19th", "20th",
+                "21th", "22th", "23th", "24th", "25th", "26th", "27th", "28th", "29th", "30th",
+            )),
+            AttributeModel("Weeds/Cover Crop", "None", listOf(
+                "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th",
+            )),
+            AttributeModel("Timing", "None", listOf(
+                "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th",
+            )),
+            AttributeModel("Plot ID", "None", listOf(
+                "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th",
+            )),
+            AttributeModel("Weather", "None", listOf(
+                "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th",
+            )),
         )
 
         this.attributes.value = attributes

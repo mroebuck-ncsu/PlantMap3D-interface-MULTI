@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Search
@@ -85,6 +84,8 @@ class DashboardActivity : DefaultAppActivity() {
         val attributes = rememberSaveable { mutableStateOf(listOf<AttributeModel>()) }
         val cameras = rememberSaveable { mutableStateOf(listOf<String>()) }
         val bottomBarItems = rememberSaveable { mutableStateOf(listOf<DashboardBottomItemType>()) }
+        val currentBottomBarItem = rememberSaveable { mutableStateOf(DashboardBottomItemType.Configuration) }
+        val currentDataCollectionIntent = rememberSaveable { mutableStateOf<TopAppBarActionType.DataCollection?>(null) }
 
         viewModel = remember {
             mutableStateOf(
@@ -93,6 +94,8 @@ class DashboardActivity : DefaultAppActivity() {
                     attributes = attributes,
                     cameras = cameras,
                     bottomBarItems = bottomBarItems,
+                    currentBottomBarItem = currentBottomBarItem,
+                    currentDataCollectionIntent = currentDataCollectionIntent,
                 )
             )
         }
@@ -139,37 +142,37 @@ class DashboardActivity : DefaultAppActivity() {
 
     @Composable
     private fun CreateTopAppBar(modifier: Modifier) {
+        viewModel.value.apply {
+            currentBottomBarItem.value.apply {
+                when(this) {
+                    DashboardBottomItemType.Configuration -> CreateConfigurationTopAppBar(modifier, this)
+                    DashboardBottomItemType.DataCollection -> CreateDataCollectionTopAppBar(modifier, this)
+                    DashboardBottomItemType.DataReview -> CreateDataReviewTopAppBar(modifier, this)
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun CreateConfigurationTopAppBar(
+        modifier: Modifier,
+        item: DashboardBottomItemType
+    ) {
         TopAppBar(
             modifier = modifier,
-            title = { Text("Dashboard") },
-            navigationIcon = {
-                IconButton(onClick = {
-                    coroutineScope.launch {
-                        scaffoldState.drawerState.apply {
-                            if (isClosed) open() else close()
-                        }
-                    }
-                }) {
-                    Icon(imageVector = Icons.Filled.Menu, contentDescription = "Navigation icon")
-                }
-            },
+            title = { Text(item.title) },
+        )
+    }
+
+    @Composable
+    private fun CreateDataCollectionTopAppBar(
+        modifier: Modifier,
+        item: DashboardBottomItemType
+    ) {
+        TopAppBar(
+            modifier = modifier,
+            title = { Text(item.title) },
             actions = {
-                // search icon
-                TopAppBarActionButton(
-                    imageVector = Icons.Outlined.Search,
-                    description = "Search"
-                ) {
-                    showToast("Search Click")
-                }
-
-                // lock icon
-                TopAppBarActionButton(
-                    imageVector = Icons.Outlined.Lock,
-                    description = "Lock"
-                ) {
-                    showToast("Lock Click")
-                }
-
                 // options icon (vertical dots)
                 TopAppBarActionButton(
                     imageVector = Icons.Outlined.MoreVert,
@@ -192,26 +195,57 @@ class DashboardActivity : DefaultAppActivity() {
                 ) {
                     // this is a column scope
                     // items are added vertically
-
-                    DropdownMenuItem(onClick = {
-                        showToast("Refresh Click")
-                        dropDownMenuExpanded.value = false
-                    }) {
-                        Text("Refresh")
+                    TopAppBarActionType.DataCollection.values().map {
+                        DropdownMenuItem(onClick = {
+                            showToast("${it.title} Click")
+                            dropDownMenuExpanded.value = false
+                        }) {
+                            Text(it.title)
+                        }
                     }
+                }
+            }
+        )
+    }
 
-                    DropdownMenuItem(onClick = {
-                        showToast("Settings Click")
-                        dropDownMenuExpanded.value = false
-                    }) {
-                        Text("Settings")
-                    }
+    @Composable
+    private fun CreateDataReviewTopAppBar(
+        modifier: Modifier,
+        item: DashboardBottomItemType
+    ) {
+        TopAppBar(
+            modifier = modifier,
+            title = { Text(item.title) },
+            actions = {
+                // options icon (vertical dots)
+                TopAppBarActionButton(
+                    imageVector = Icons.Outlined.MoreVert,
+                    description = "Options"
+                ) {
+                    // show the drop down menu
+                    dropDownMenuExpanded.value = true
+                }
 
-                    DropdownMenuItem(onClick = {
-                        showToast("Send Feedback Click")
+                // drop down menu
+                DropdownMenu(
+                    modifier = modifier,
+                    expanded = dropDownMenuExpanded.value,
+                    onDismissRequest = {
                         dropDownMenuExpanded.value = false
-                    }) {
-                        Text("Send Feedback")
+                    },
+                    // play around with these values
+                    // to position the menu properly
+                    offset = DpOffset(x = 10.dp, y = (-60).dp)
+                ) {
+                    // this is a column scope
+                    // items are added vertically
+                    TopAppBarActionType.DataReview.values().map {
+                        DropdownMenuItem(onClick = {
+                            showToast("${it.title} Click")
+                            dropDownMenuExpanded.value = false
+                        }) {
+                            Text(it.title)
+                        }
                     }
                 }
             }
@@ -244,7 +278,7 @@ class DashboardActivity : DefaultAppActivity() {
                     selected = selectedBottomNavigationItem.value == viewModel.value.bottomBarItems.value.indexOf(item),
                     onClick = {
                         selectedBottomNavigationItem.value = viewModel.value.bottomBarItems.value.indexOf(item)
-                        showToast("$item Click")
+                        viewModel.value.emit(DashboardStore.Intent.BottomBarItemSelected(item))
                     }
                 )
             }
@@ -298,6 +332,19 @@ class DashboardActivity : DefaultAppActivity() {
         modifier: Modifier,
         paddingValues: PaddingValues
     ) {
+        viewModel.value.apply {
+            currentBottomBarItem.value.apply {
+                when(this) {
+                    DashboardBottomItemType.Configuration -> CreateConfigurationContentView(modifier)
+                    DashboardBottomItemType.DataCollection -> CreateDataCollectionContentView(modifier)
+                    DashboardBottomItemType.DataReview -> CreateDataReviewContentView(modifier)
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun CreateConfigurationContentView(modifier: Modifier) {
         LazyColumn(
             modifier = modifier,
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
@@ -312,6 +359,16 @@ class DashboardActivity : DefaultAppActivity() {
                 }
             )
         }
+    }
+
+    @Composable
+    private fun CreateDataCollectionContentView(modifier: Modifier) {
+
+    }
+
+    @Composable
+    private fun CreateDataReviewContentView(modifier: Modifier) {
+
     }
 
     @Composable
@@ -416,7 +473,44 @@ class DashboardActivity : DefaultAppActivity() {
         device = Devices.TABLET
     )
     @Composable
-    fun LaunchPreview() {
+    fun LaunchConfigurationPreview() { LaunchPreviewWithBottomBarItem(DashboardBottomItemType.Configuration) }
+
+    @Preview(
+        fontScale = 1f,
+        name = "DataCollection - Phone",
+        showSystemUi = true,
+        showBackground = true,
+        device = Devices.TABLET
+    )
+    @Preview(
+        fontScale = 1f,
+        name = "DataCollection - Tablet",
+        showSystemUi = true,
+        showBackground = true,
+        device = Devices.PHONE
+    )
+    @Composable
+    fun LaunchDataCollectionPreview() { LaunchPreviewWithBottomBarItem(DashboardBottomItemType.DataCollection) }
+
+    @Preview(
+        fontScale = 1f,
+        name = "DataReview - Phone",
+        showSystemUi = true,
+        showBackground = true,
+        device = Devices.TABLET
+    )
+    @Preview(
+        fontScale = 1f,
+        name = "DataReview - Tablet",
+        showSystemUi = true,
+        showBackground = true,
+        device = Devices.PHONE
+    )
+    @Composable
+    fun LaunchDataReviewPreview() { LaunchPreviewWithBottomBarItem(DashboardBottomItemType.DataReview) }
+
+    @Composable
+    fun LaunchPreviewWithBottomBarItem(configuration: DashboardBottomItemType) {
         val modifier = Modifier
         val appThemeState = DefaultAppThemeState(
             isDarkTheme = false,
@@ -425,11 +519,15 @@ class DashboardActivity : DefaultAppActivity() {
         val attributes = rememberSaveable { mutableStateOf(listOf<AttributeModel>()) }
         val cameras = rememberSaveable { mutableStateOf(listOf<String>()) }
         val bottomBarItems = rememberSaveable { mutableStateOf(listOf<DashboardBottomItemType>()) }
+        val currentBottomBarItem = rememberSaveable { mutableStateOf(configuration) }
+        val currentDataCollectionIntent = rememberSaveable { mutableStateOf<TopAppBarActionType.DataCollection?>(null) }
         val fakeViewModel = DefaultDashboardViewModel(
             navigator = FakeDashboardNavigator(),
             cameras = cameras,
             attributes = attributes,
             bottomBarItems = bottomBarItems,
+            currentBottomBarItem = currentBottomBarItem,
+            currentDataCollectionIntent = currentDataCollectionIntent,
         )
 
         viewModel = remember {

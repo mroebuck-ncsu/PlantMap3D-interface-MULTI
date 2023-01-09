@@ -13,6 +13,8 @@ class DefaultDashboardViewModel(
     override val cameras: MutableState<List<String>>,
     override val attributes: MutableState<List<AttributeModel>>,
     override val bottomBarItems: MutableState<List<DashboardBottomItemType>>,
+    override val currentBottomBarItem: MutableState<DashboardBottomItemType>,
+    override val currentDataCollectionIntent: MutableState<TopAppBarActionType.DataCollection?>,
 ) : ViewModel(), DashboardViewModel {
 
     // region Override Methods and Properties
@@ -38,6 +40,7 @@ class DefaultDashboardViewModel(
     override fun emit(intent: DashboardStore.Intent) {
         when(intent) {
             is DashboardStore.Intent.AttributeSelected -> onAttributeSelected(intent)
+            is DashboardStore.Intent.BottomBarItemSelected -> onBottomBarItemSelected(intent)
         }
     }
 
@@ -93,6 +96,10 @@ class DefaultDashboardViewModel(
     private fun onAttributeSelected(intent: DashboardStore.Intent.AttributeSelected) {
         lastSelection = intent.attributeModel
         navigator.emit(intent.context, intent.attributeModel)
+    }
+
+    private fun onBottomBarItemSelected(intent: DashboardStore.Intent.BottomBarItemSelected) {
+        currentBottomBarItem.value = intent.item
     }
 
     // endregion

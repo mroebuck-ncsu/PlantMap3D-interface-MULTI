@@ -9,6 +9,8 @@ sealed class DashboardStore {
             val context: Context,
             val attributeModel: AttributeModel,
         ) : Intent()
+
+        data class BottomBarItemSelected(val item: DashboardBottomItemType) : Intent()
     }
     sealed class State {
         class AttributeUpdated(val list: List<AttributeModel>): State()

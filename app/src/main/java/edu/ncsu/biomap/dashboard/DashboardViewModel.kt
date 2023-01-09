@@ -12,6 +12,8 @@ interface DashboardViewModel {
     val attributes: MutableState<List<AttributeModel>>
     val cameras: MutableState<List<String>>
     val bottomBarItems: MutableState<List<DashboardBottomItemType>>
+    val currentBottomBarItem: MutableState<DashboardBottomItemType>
+    val currentDataCollectionIntent: MutableState<TopAppBarActionType.DataCollection?>
 
     fun restoreInstanceState(savedInstanceState: Bundle?)
     fun onSaveInstanceState(outState: Bundle)

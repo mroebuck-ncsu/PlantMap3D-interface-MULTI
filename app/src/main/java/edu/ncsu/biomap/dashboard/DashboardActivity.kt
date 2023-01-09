@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -182,6 +183,17 @@ class DashboardActivity : DefaultAppActivity() {
         TopAppBar(
             modifier = modifier,
             title = { Text(item.title) },
+            navigationIcon = {
+                IconButton(onClick = {
+                    coroutineScope.launch {
+                        scaffoldState.drawerState.apply {
+                            if (isClosed) open() else close()
+                        }
+                    }
+                }) {
+                    Icon(imageVector = Icons.Outlined.List, contentDescription = "Camera")
+                }
+            },
             actions = {
                 // options icon (vertical dots)
                 TopAppBarActionButton(

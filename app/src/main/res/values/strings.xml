@@ -4,4 +4,7 @@
     <string name="user_type_instructions">Please choose who you are to get started.</string>
     <string name="researcher">Researcher</string>
     <string name="farmer">Farmer</string>
+    <string name="internal_server_error">Encountered internal error. Please try again. If this continues, please contact technical support.</string>
+    <string name="saving_change">Saving change...</string>
+    <string name="save">Save</string>
 </resources>

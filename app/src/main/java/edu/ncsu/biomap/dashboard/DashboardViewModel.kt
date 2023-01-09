@@ -11,6 +11,7 @@ interface DashboardViewModel {
     val stateFlow: MutableStateFlow<DashboardStore.State>
     val attributes: MutableState<List<AttributeModel>>
     val cameras: MutableState<List<String>>
+    val bottomBarItems: MutableState<List<DashboardBottomItemType>>
 
     fun restoreInstanceState(savedInstanceState: Bundle?)
     fun onSaveInstanceState(outState: Bundle)

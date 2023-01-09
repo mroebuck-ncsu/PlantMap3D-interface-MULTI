@@ -12,6 +12,7 @@ class DefaultDashboardViewModel(
     private val navigator: DashboardNavigator,
     override val cameras: MutableState<List<String>>,
     override val attributes: MutableState<List<AttributeModel>>,
+    override val bottomBarItems: MutableState<List<DashboardBottomItemType>>,
 ) : ViewModel(), DashboardViewModel {
 
     // region Override Methods and Properties
@@ -86,6 +87,7 @@ class DefaultDashboardViewModel(
 
         this.attributes.value = attributes
         this.cameras.value = cameras
+        this.bottomBarItems.value = DashboardBottomItemType.values().toList()
     }
 
     private fun onAttributeSelected(intent: DashboardStore.Intent.AttributeSelected) {

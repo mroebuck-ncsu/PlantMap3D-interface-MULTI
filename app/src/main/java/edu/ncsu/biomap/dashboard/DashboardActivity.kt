@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Search
@@ -83,6 +84,7 @@ class DashboardActivity : DefaultAppActivity() {
         val navigator = DefaultDashboardNavigator(startForResult = startForResult)
         val attributes = rememberSaveable { mutableStateOf(listOf<AttributeModel>()) }
         val cameras = rememberSaveable { mutableStateOf(listOf<String>()) }
+        val bottomBarItems = rememberSaveable { mutableStateOf(listOf<DashboardBottomItemType>()) }
 
         viewModel = remember {
             mutableStateOf(
@@ -90,6 +92,7 @@ class DashboardActivity : DefaultAppActivity() {
                     navigator = navigator,
                     attributes = attributes,
                     cameras = cameras,
+                    bottomBarItems = bottomBarItems,
                 )
             )
         }
@@ -230,22 +233,17 @@ class DashboardActivity : DefaultAppActivity() {
 
     @Composable
     private fun CreateBottomBar(modifier: Modifier) {
-        val items = listOf(
-            "Configuration",
-            "Data Collection",
-            "Data Review",
-        )
         BottomNavigation(modifier = modifier) {
-            items.forEach { item ->
+            viewModel.value.bottomBarItems.value.forEach { item ->
                 BottomNavigationItem(
                     icon = {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                        Icon(item.icon, contentDescription = item.contentDescription)
                     },
-                    label = { Text(text = item) },
+                    label = { Text(text = item.title) },
                     alwaysShowLabel = true,
-                    selected = selectedBottomNavigationItem.value == items.indexOf(item),
+                    selected = selectedBottomNavigationItem.value == viewModel.value.bottomBarItems.value.indexOf(item),
                     onClick = {
-                        selectedBottomNavigationItem.value = items.indexOf(item)
+                        selectedBottomNavigationItem.value = viewModel.value.bottomBarItems.value.indexOf(item)
                         showToast("$item Click")
                     }
                 )
@@ -426,10 +424,12 @@ class DashboardActivity : DefaultAppActivity() {
         )
         val attributes = rememberSaveable { mutableStateOf(listOf<AttributeModel>()) }
         val cameras = rememberSaveable { mutableStateOf(listOf<String>()) }
+        val bottomBarItems = rememberSaveable { mutableStateOf(listOf<DashboardBottomItemType>()) }
         val fakeViewModel = DefaultDashboardViewModel(
             navigator = FakeDashboardNavigator(),
             cameras = cameras,
             attributes = attributes,
+            bottomBarItems = bottomBarItems,
         )
 
         viewModel = remember {
